@@ -221,7 +221,8 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         [_doneButton setTitleTextAttributes:[NSDictionary dictionary] forState:UIControlStateHighlighted];
         self.navigationItem.rightBarButtonItem = _doneButton;
         [self.navigationItem setHidesBackButton:YES];
-    } else {
+    }
+    /*else {
         // We're not first so show back button
         UIViewController *previousViewController = [self.navigationController.viewControllers objectAtIndex:self.navigationController.viewControllers.count-2];
         NSString *backButtonTitle = previousViewController.navigationItem.backBarButtonItem ? previousViewController.navigationItem.backBarButtonItem.title : previousViewController.title;
@@ -235,7 +236,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         [newBackButton setTitleTextAttributes:[NSDictionary dictionary] forState:UIControlStateHighlighted];
         _previousViewControllerBackButton = previousViewController.navigationItem.backBarButtonItem; // remember previous
         previousViewController.navigationItem.backBarButtonItem = newBackButton;
-    }
+    }*/
 
     // Toolbar items
     BOOL hasItems = NO;
