@@ -179,6 +179,9 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     if (self.displayActionButton) {
         _actionButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(actionButtonPressed:)];
     }
+    if (self.customDeleteAction) {
+        _deleteButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(deleteButtonPressed:)];
+    }
     
     // Update
     [self reloadData];
@@ -206,7 +209,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
     [_recycledPages removeAllObjects];
     
     // Navigation buttons
-    if ([self.navigationController.viewControllers objectAtIndex:0] == self) {
+    if (YES) { //([self.navigationController.viewControllers objectAtIndex:0] == self) {
         // We're first on stack so show done button
         _doneButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Done", nil) style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonPressed:)];
         // Set appearance
@@ -217,6 +220,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         [_doneButton setTitleTextAttributes:[NSDictionary dictionary] forState:UIControlStateNormal];
         [_doneButton setTitleTextAttributes:[NSDictionary dictionary] forState:UIControlStateHighlighted];
         self.navigationItem.rightBarButtonItem = _doneButton;
+        [self.navigationItem setHidesBackButton:YES];
     } else {
         // We're not first so show back button
         UIViewController *previousViewController = [self.navigationController.viewControllers objectAtIndex:self.navigationController.viewControllers.count-2];
@@ -245,7 +249,10 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
         hasItems = YES;
         [items addObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageForResourcePath:@"MWPhotoBrowser.bundle/UIBarButtonItemGrid" ofType:@"png" inBundle:[NSBundle bundleForClass:[self class]]] style:UIBarButtonItemStylePlain target:self action:@selector(showGridAnimated)]];
     } else {
-        [items addObject:fixedSpace];
+        if (self.customDeleteAction)
+            [items addObject:_deleteButton];
+        else
+            [items addObject:fixedSpace];
     }
 
     // Middle - Nav
@@ -1571,8 +1578,18 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
             // Call delegate method and let them dismiss us
             [_delegate photoBrowserDidFinishModalPresentation:self];
         } else  {
-            [self dismissViewControllerAnimated:YES completion:nil];
+            if (self.shouldPopToRoot)
+                [self.navigationController popToRootViewControllerAnimated:YES];
+            else
+                [self dismissViewControllerAnimated:YES completion:nil];
         }
+    }
+}
+
+- (void)deleteButtonPressed:(id)sender {
+    if ([self.delegate respondsToSelector:@selector(photoBrowser:deletePhotoAtIndex:)]) {
+        [self.delegate photoBrowser:self deletePhotoAtIndex:_currentPageIndex];
+        [self.navigationController popViewControllerAnimated:YES];
     }
 }
 
