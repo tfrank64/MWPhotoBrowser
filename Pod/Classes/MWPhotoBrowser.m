@@ -1582,7 +1582,7 @@ static void * MWVideoPlayerObservation = &MWVideoPlayerObservation;
             if (self.shouldPopToRoot)
                 [self.navigationController popToRootViewControllerAnimated:YES];
             else
-                [self dismissViewControllerAnimated:YES completion:nil];
+                [self.navigationController popViewControllerAnimated:YES];
         }
     }
 }
